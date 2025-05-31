@@ -8,6 +8,7 @@ import streamlit as st
 import pandas as pd
 import os
 from datetime import date
+st.set_page_config(page_title="SmartMood", layout="centered")
 
 st.title("🧠 SmartMood Tracker - Versi Multi User")
 
