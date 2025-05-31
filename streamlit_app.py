@@ -4,6 +4,47 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import os
 import requests
+import streamlit as st
+import pandas as pd
+import os
+from datetime import date
+
+st.title("🧠 SmartMood Tracker - Versi Multi User")
+
+# 👤 Login sederhana
+username = st.text_input("Masukkan nama pengguna kamu:")
+
+if username:
+    data_file = f"data_{username}.csv"
+
+    if os.path.exists(data_file):
+        df = pd.read_csv(data_file)
+    else:
+        df = pd.DataFrame(columns=["Tanggal", "Aktivitas", "Mood"])
+
+    st.subheader(f"Hai, {username.capitalize()}! 👋")
+    
+    # 👉 Ini bagian input aktivitas dan mood
+    aktivitas = st.selectbox("Pilih aktivitas hari ini:", 
+                             ["Belajar", "Tidur", "Olahraga", "Ngobrol", "Main HP", "Makan"])
+    mood = st.slider("Mood kamu hari ini (1 = Buruk banget, 5 = Sangat bahagia)", 1, 5)
+
+    if st.button("✅ Simpan"):
+        new_data = pd.DataFrame([[date.today(), aktivitas, mood]], columns=df.columns)
+        df = pd.concat([df, new_data], ignore_index=True)
+        df.to_csv(data_file, index=False)
+        st.success("Data kamu berhasil disimpan!")
+
+    st.subheader("📊 Riwayat Mood Kamu")
+    st.dataframe(df)
+
+    if st.button("🔄 Reset Data"):
+        os.remove(data_file)
+        st.warning("Data kamu telah dihapus.")
+        st.experimental_rerun()
+else:
+    st.info("Masukkan nama pengguna dulu untuk memulai.")
+
 
 st.set_page_config(page_title="SmartMood", layout="centered")
 st.title("🌈 SmartMood - Pelacak Mood & Aktivitas Harian")
